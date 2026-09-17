@@ -1,0 +1,31 @@
+{
+  "name": "@courier/mobile",
+  "version": "0.1.0",
+  "private": true,
+  "main": "index.ts",
+  "scripts": {
+    "start": "expo start --dev-client",
+    "android": "expo start --android --dev-client",
+    "typecheck": "tsc --noEmit"
+  },
+  "dependencies": {
+    "@courier/client": "0.1.0",
+    "@courier/core": "0.1.0",
+    "expo": "57.0.23",
+    "expo-crypto": "57.0.3",
+    "expo-dev-client": "~57.0.19",
+    "expo-location": "~57.0.18",
+    "expo-secure-store": "~57.0.4",
+    "expo-status-bar": "~57.0.1",
+    "expo-task-manager": "~57.0.18",
+    "expo-updates": "~57.0.22",
+    "react": "19.2.3",
+    "react-native": "0.86.3",
+    "react-native-maps": "1.27.2",
+    "react-native-safe-area-context": "~5.7.0",
+    "react-native-url-polyfill": "4.0.0"
+  },
+  "devDependencies": {
+    "@types/react": "19.2.4"
+  }
+}

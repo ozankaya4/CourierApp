@@ -1,0 +1,20 @@
+{
+  "name": "@courier/client",
+  "version": "0.1.0",
+  "private": true,
+  "main": "src/index.ts",
+  "types": "src/index.ts",
+  "scripts": {
+    "typecheck": "tsc --noEmit"
+  },
+  "dependencies": {
+    "@courier/core": "0.1.0",
+    "@supabase/supabase-js": "2.116.0"
+  },
+  "peerDependencies": {
+    "react": "19.2.3"
+  },
+  "devDependencies": {
+    "@types/react": "19.3.0"
+  }
+}

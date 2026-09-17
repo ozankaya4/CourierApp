@@ -1,0 +1,7 @@
+node_modules
+.next
+.expo
+.local
+package-lock.json
+supabase
+
