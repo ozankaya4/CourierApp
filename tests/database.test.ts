@@ -242,6 +242,25 @@ test("gerçek PostgreSQL üzerinde hesap, adres gizliliği, sipariş ve puanlama
       rpc("orders.transition", { ...get("courier"), status: "picked_up" }),
     )) as any;
     assert.equal(courierOrder.destination.address, request.address);
+    await db.query(
+      "update private.locations set received_at = clock_timestamp() - interval '4 seconds' where order_id = $1",
+      [orderId],
+    );
+    await asUser(users.courier, () =>
+      rpc("locations.publish", {
+        ...get("courier"),
+        latitude: 41.025,
+        longitude: 29.035,
+        accuracy: 10,
+        recorded_at: new Date(Date.now() + 1000).toISOString(),
+      }),
+    );
+    const customerOnTheWay = (await asUser(users.customer, () =>
+      rpc("orders.get", get("customer")),
+    )) as any;
+    assert.equal(customerOnTheWay.status, "picked_up");
+    assert.equal(customerOnTheWay.location.latitude, 41.025);
+    assert.equal(customerOnTheWay.location.longitude, 29.035);
     const restaurantPickedUp = (await asUser(users.restaurant, () =>
       rpc("orders.get", get("restaurant")),
     )) as any;
@@ -251,6 +270,14 @@ test("gerçek PostgreSQL üzerinde hesap, adres gizliliği, sipariş ve puanlama
       null,
       "Restoran müşteri güzergâhını izleyemez",
     );
+    assert.equal(restaurantPickedUp.status, "picked_up");
+    const restaurantList = (await asUser(users.restaurant, () =>
+      rpc("orders.list", { role: "restaurant" }),
+    )) as any[];
+    assert.equal(restaurantList.length, 1);
+    assert.equal(restaurantList[0].status, "picked_up");
+    assert.equal(restaurantList[0].location, null);
+    assert.equal(restaurantList[0].destination, null);
     courierOrder = (await asUser(users.courier, () =>
       rpc("orders.transition", { ...get("courier"), status: "delivered" }),
     )) as any;

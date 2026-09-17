@@ -1026,26 +1026,30 @@ function OrderCard({
           {geoError && <p className="error">{geoError}</p>}
         </>
       )}
-      {!["delivered", "cancelled"].includes(order.status) && (
-        <details className="map-details">
-          <summary>Haritada takip et</summary>
-          <OrderMap order={order} />
-          <div className="map-legend">
-            <span>Restoran</span>
-            <span>Kurye</span>
-            {order.destination && <span>Teslimat adresi</span>}
-          </div>
-          <p className="muted">
-            {role === "restaurant" && order.status === "picked_up"
-              ? "Kurye yola çıktı. Restoran için konum paylaşımı tamamlandı."
-              : order.location
+      {role === "restaurant" && order.status === "picked_up" && (
+        <p className="muted">
+          Kurye yola çıktı. Teslimat durumunu buradan takip edebilirsin.
+        </p>
+      )}
+      {!["delivered", "cancelled"].includes(order.status) &&
+        !(role === "restaurant" && order.status === "picked_up") && (
+          <details className="map-details">
+            <summary>Haritada takip et</summary>
+            <OrderMap order={order} />
+            <div className="map-legend">
+              <span>Restoran</span>
+              <span>Kurye</span>
+              {order.destination && <span>Teslimat adresi</span>}
+            </div>
+            <p className="muted">
+              {order.location
                 ? isLocationFresh(order.location.recorded_at, now)
                   ? "Kurye konumu güncel."
                   : "Konum güncel değil. Bağlantı bekleniyor."
                 : "Kuryeden konum bekleniyor."}
-          </p>
-        </details>
-      )}
+            </p>
+          </details>
+        )}
       <div className="order-actions">
         {role === "courier" &&
           !order.courier_id &&

@@ -957,56 +957,60 @@ function MobileOrder({
           {trackingError && <Text style={s.notice}>{trackingError}</Text>}
         </>
       )}
-      {!["delivered", "cancelled"].includes(order.status) && (
-        <>
-          <Button secondary onPress={() => setShowMap(!showMap)}>
-            {showMap ? "Haritayı kapat" : "Haritada takip et"}
-          </Button>
-          {showMap && (
-            <MapView
-              style={s.map}
-              initialRegion={{
-                latitude: order.restaurant.latitude,
-                longitude: order.restaurant.longitude,
-                latitudeDelta: 0.07,
-                longitudeDelta: 0.07,
-              }}
-            >
-              <Marker
-                coordinate={{
+      {role === "restaurant" && order.status === "picked_up" && (
+        <Text style={s.small}>
+          Kurye yola çıktı. Teslimat durumunu buradan takip edebilirsin.
+        </Text>
+      )}
+      {!["delivered", "cancelled"].includes(order.status) &&
+        !(role === "restaurant" && order.status === "picked_up") && (
+          <>
+            <Button secondary onPress={() => setShowMap(!showMap)}>
+              {showMap ? "Haritayı kapat" : "Haritada takip et"}
+            </Button>
+            {showMap && (
+              <MapView
+                style={s.map}
+                initialRegion={{
                   latitude: order.restaurant.latitude,
                   longitude: order.restaurant.longitude,
+                  latitudeDelta: 0.07,
+                  longitudeDelta: 0.07,
                 }}
-                title="Restoran"
-                pinColor={colors.accent}
-              />
-              {order.destination && (
+              >
                 <Marker
-                  coordinate={order.destination}
-                  title="Teslimat adresi"
-                  pinColor="#315ca8"
+                  coordinate={{
+                    latitude: order.restaurant.latitude,
+                    longitude: order.restaurant.longitude,
+                  }}
+                  title="Restoran"
+                  pinColor={colors.accent}
                 />
-              )}
-              {order.location && (
-                <Marker
-                  coordinate={order.location}
-                  title="Kurye"
-                  pinColor={colors.green}
-                />
-              )}
-            </MapView>
-          )}
-          <Text style={s.small}>
-            {role === "restaurant" && order.status === "picked_up"
-              ? "Kurye yola çıktı. Restoran için konum paylaşımı tamamlandı."
-              : order.location
+                {order.destination && (
+                  <Marker
+                    coordinate={order.destination}
+                    title="Teslimat adresi"
+                    pinColor="#315ca8"
+                  />
+                )}
+                {order.location && (
+                  <Marker
+                    coordinate={order.location}
+                    title="Kurye"
+                    pinColor={colors.green}
+                  />
+                )}
+              </MapView>
+            )}
+            <Text style={s.small}>
+              {order.location
                 ? isLocationFresh(order.location.recorded_at, now)
                   ? "Kurye konumu güncel."
                   : "Konum güncel değil. Bağlantı bekleniyor."
                 : "Kuryeden konum bekleniyor."}
-          </Text>
-        </>
-      )}
+            </Text>
+          </>
+        )}
       {role === "courier" && !order.courier_id && order.status === "ready" && (
         <Button
           disabled={busy}
